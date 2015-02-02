@@ -3,6 +3,7 @@
 #include "cinder/gl/Texture.h"
 
 #include "CinderFreenect.h"
+#include "OPCClient.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -17,6 +18,10 @@ class VolumeMapperApp : public AppBasic {
 	
 	KinectRef		mKinect;
 	gl::Texture		mColorTexture, mDepthTexture;	
+    OPCClient       mOPC;
+    vector<char>    mPacket;
+    int             mState;
+    int             mNumLeds;
 };
 
 void VolumeMapperApp::prepareSettings( Settings* settings )
@@ -27,15 +32,32 @@ void VolumeMapperApp::prepareSettings( Settings* settings )
 void VolumeMapperApp::setup()
 {
 	mKinect = Kinect::create();
+    mState = 0;
+    mNumLeds = 64;
+
+    mPacket.resize(sizeof(OPCClient::Header) + mNumLeds * 3);
+
 }
 
 void VolumeMapperApp::update()
-{	
-	if( mKinect->checkNewDepthFrame() )
+{
+    if( mKinect->checkNewDepthFrame() )
 		mDepthTexture = mKinect->getDepthImage();
 	
-	if( mKinect->checkNewVideoFrame() )
+    if( mKinect->checkNewVideoFrame() ) {
 		mColorTexture = mKinect->getVideoImage();
+    
+        // Next LED
+        mState++;
+        int led = mState % mNumLeds;
+
+        auto header = OPCClient::Header::view(mPacket);
+        header.init(0, mOPC.SET_PIXEL_COLORS, mNumLeds * 3);
+        for (int ch = 0; ch < 3; ch++) {
+            header.data()[led*3 + ch] = 255;
+        }
+        mOPC.write(mPacket);
+    }
 }
 
 void VolumeMapperApp::draw()
