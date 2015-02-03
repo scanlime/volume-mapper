@@ -104,15 +104,15 @@ void VolumeMapperApp::setup()
     gl::disable(GL_DEPTH_TEST);
     gl::disable(GL_CULL_FACE);
 
-    mNumLeds = 4;
+    mNumLeds = 16;
     mFramesPerLed = 4;
-    mGridX = 160;
-    mGridY = 120;
+    mGridX = 128;
+    mGridY = 128;
     mGridZ = 128;
-    mZLimit = 0.1;
+    mZLimit = 0.067;
 
     mSliceAlpha = 0.5;
-    mGain = 100.0;
+    mGain = 10.0;
     mCurrentLed = 0;
     mCurrentFrame = 0;
     mViewCameraPointCloud = true;
@@ -169,6 +169,9 @@ void VolumeMapperApp::clearGrid()
 void VolumeMapperApp::update()
 {
     mLeds.resize(mNumLeds);
+    if (mCurrentLed >= mNumLeds) {
+        mCurrentLed = 0;
+    }
 
     if (mKinect->checkNewDepthFrame()) {
         mDepthTexture = gl::Texture::create(mKinect->getDepthImage());
@@ -245,7 +248,7 @@ void VolumeMapperApp::draw()
     Led& currentLed = mLeds[mCurrentLed];
     
     if (mViewFilteredPointCloud && currentLed.filter && currentLed.mask) {
-        mPointCloud.mGain = mGain;
+        mPointCloud.mGain = 1e2 * mGain;
         mPointCloud.draw(currentLed.mask.getTexture(), currentLed.filter.getTexture());
     }
 
@@ -299,7 +302,7 @@ void VolumeMapperApp::updateGrid(Led& led)
 
         if (!slice) {
             gl::Fbo::Format format;
-            format.setColorInternalFormat(GL_RGB32F_ARB);
+            format.setColorInternalFormat(GL_R32F);
             slice = gl::Fbo(mGridX, mGridY, format);
             needClear = true;
         }
@@ -346,7 +349,7 @@ void VolumeMapperApp::updateFilter(Led& led)
 
     if (!led.filter) {
         gl::Fbo::Format format;
-        format.setColorInternalFormat(GL_RGB32F_ARB);
+        format.setColorInternalFormat(GL_R32F);
         led.filter = gl::Fbo(led.frames[0]->getWidth(), led.frames[0]->getHeight(), format);
     }
     
@@ -385,7 +388,7 @@ void VolumeMapperApp::updateDepthMask(Led& led)
 {
     if (!led.mask) {
         gl::Fbo::Format format;
-        format.setColorInternalFormat(GL_RGB32F_ARB);
+        format.setColorInternalFormat(GL_R32F);
         led.mask = gl::Fbo(mDepthTexture->getWidth(), mDepthTexture->getHeight(), format);
     }
     

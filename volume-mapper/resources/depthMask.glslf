@@ -25,5 +25,5 @@ void main()
         }
     }
 
-    gl_FragColor = texture2D(depth, texcoord);
+    gl_FragColor = vec4(texture2D(depth, texcoord).r, 0.0, 0.0, 1.0);
 }

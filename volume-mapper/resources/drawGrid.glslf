@@ -6,5 +6,5 @@ uniform float gain;
 
 void main()
 {
-    gl_FragColor = gain * texture2D(layer, texcoord);
+    gl_FragColor = gain * vec4(vec3(texture2D(layer, texcoord).r), 1.0);
 }
