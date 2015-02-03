@@ -44,6 +44,10 @@
 		756459D31A801B4F0028586C /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 756459D21A801B4F0028586C /* particle.png */; };
 		756459D61A804B9C0028586C /* depthMask.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459D41A804B9C0028586C /* depthMask.glslf */; };
 		756459D71A804B9C0028586C /* depthMask.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459D51A804B9C0028586C /* depthMask.glslv */; };
+		756459DC1A8075920028586C /* slice.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459DA1A8075920028586C /* slice.glslf */; };
+		756459DD1A8075920028586C /* slice.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459DB1A8075920028586C /* slice.glslv */; };
+		756459E01A8079A70028586C /* drawGrid.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459DE1A8079A70028586C /* drawGrid.glslf */; };
+		756459E11A8079A70028586C /* drawGrid.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459DF1A8079A70028586C /* drawGrid.glslv */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		FAB99DEE985E4AE185F96494 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 885AD63FA1254C9A9BA299BE /* IOKit.framework */; };
 /* End PBXBuildFile section */
@@ -123,6 +127,10 @@
 		756459D21A801B4F0028586C /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = particle.png; path = ../resources/particle.png; sourceTree = "<group>"; };
 		756459D41A804B9C0028586C /* depthMask.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = depthMask.glslf; path = ../resources/depthMask.glslf; sourceTree = "<group>"; };
 		756459D51A804B9C0028586C /* depthMask.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = depthMask.glslv; path = ../resources/depthMask.glslv; sourceTree = "<group>"; };
+		756459DA1A8075920028586C /* slice.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = slice.glslf; path = ../resources/slice.glslf; sourceTree = "<group>"; };
+		756459DB1A8075920028586C /* slice.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = slice.glslv; path = ../resources/slice.glslv; sourceTree = "<group>"; };
+		756459DE1A8079A70028586C /* drawGrid.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = drawGrid.glslf; path = ../resources/drawGrid.glslf; sourceTree = "<group>"; };
+		756459DF1A8079A70028586C /* drawGrid.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = drawGrid.glslv; path = ../resources/drawGrid.glslv; sourceTree = "<group>"; };
 		885AD63FA1254C9A9BA299BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		8D1107320486CEB800E47090 /* VolumeMapper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VolumeMapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD8E092C4ED8446B91C3467C /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; };
@@ -230,6 +238,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				756459DE1A8079A70028586C /* drawGrid.glslf */,
+				756459DF1A8079A70028586C /* drawGrid.glslv */,
+				756459DA1A8075920028586C /* slice.glslf */,
+				756459DB1A8075920028586C /* slice.glslv */,
 				756459D41A804B9C0028586C /* depthMask.glslf */,
 				756459D51A804B9C0028586C /* depthMask.glslv */,
 				756459D21A801B4F0028586C /* particle.png */,
@@ -429,9 +441,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				7564599D1A7F6AFF0028586C /* .gitignore in Resources */,
+				756459DC1A8075920028586C /* slice.glslf in Resources */,
 				06E96A24F9BE41C3AE6234FE /* CinderApp.icns in Resources */,
+				756459E11A8079A70028586C /* drawGrid.glslv in Resources */,
 				756459CE1A8014050028586C /* pointCloud.glslv in Resources */,
+				756459E01A8079A70028586C /* drawGrid.glslf in Resources */,
 				756459D31A801B4F0028586C /* particle.png in Resources */,
+				756459DD1A8075920028586C /* slice.glslv in Resources */,
 				756459D61A804B9C0028586C /* depthMask.glslf in Resources */,
 				756459C81A800BB20028586C /* filter.glslv in Resources */,
 				756459C71A800BB20028586C /* filter.glslf in Resources */,

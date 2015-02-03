@@ -25,6 +25,7 @@ public:
     void mouseDown(MouseEvent event);
     void mouseDrag(MouseEvent event);
     void captureBackground();
+    void clearGrid();
     
 private:
     params::InterfaceGlRef  mParams;
@@ -32,8 +33,12 @@ private:
     
 	KinectRef           mKinect;
     PointCloudRenderer  mPointCloud;
+    
     gl::GlslProgRef     mFilterProg;
     gl::GlslProgRef     mMaskProg;
+    gl::GlslProgRef     mSliceProg;
+    gl::GlslProgRef     mDrawGridProg;
+
     gl::TextureRef		mColorTexture;
     gl::TextureRef      mDepthTexture;
     gl::TextureRef      mDepthBackgroundTexture;
@@ -43,28 +48,29 @@ private:
     
     int                 mCurrentLed;
     int                 mCurrentFrame;
-    int                 mLastUpdatedLed;
     
     int                 mNumLeds;
     int                 mFramesPerLed;
+    int                 mGridX;
+    int                 mGridY;
+    int                 mGridZ;
+    float               mZLimit;
     float               mGain;
     Color               mLedColor;
-    
-    struct LedFrame {
-        gl::TextureRef  rgb;
-        gl::TextureRef  depth;
-    };
 
     struct Led {
-        gl::Fbo          filter;
-        gl::Fbo          mask;
-        vector<LedFrame> frames;
+        gl::Fbo                 filter;    // Filtered color buffer, for current depth
+        gl::Fbo                 mask;      // Masked depth buffer
+        vector<gl::TextureRef>  frames;    // Refs to original frames that we filter
+        vector<gl::Fbo>         grid;      // One VBO for each Z slice
     };
     
     vector<Led>         mLeds;
 
     void updateFilter(Led& led);
     void updateDepthMask(Led& led);
+    void updateGrid(Led& led);
+    void drawGrid(Led& led);
 };
 
 void VolumeMapperApp::prepareSettings( Settings* settings )
@@ -94,14 +100,20 @@ void VolumeMapperApp::setup()
 
     mNumLeds = 4;
     mFramesPerLed = 4;
+    mGridX = 160;
+    mGridY = 120;
+    mGridZ = 128;
+    mZLimit = 0.1;
+
     mGain = 120.0;
     mCurrentLed = 0;
     mCurrentFrame = 0;
-    mLastUpdatedLed = 0;
     mLedColor.set(1.0f, 1.0f, 1.0f);
 
     mFilterProg = gl::GlslProg::create(loadResource("filter.glslv"), loadResource("filter.glslf"));
+    mSliceProg = gl::GlslProg::create(loadResource("slice.glslv"), loadResource("slice.glslf"));
     mMaskProg = gl::GlslProg::create(loadResource("depthMask.glslv"), loadResource("depthMask.glslf"));
+    mDrawGridProg = gl::GlslProg::create(loadResource("drawGrid.glslv"), loadResource("drawGrid.glslf"));
 
     mOPC.connectConnectEventHandler(&OPCClient::onConnect, &mOPC);
     mOPC.connectErrorEventHandler(&OPCClient::onError, &mOPC);
@@ -112,18 +124,29 @@ void VolumeMapperApp::setup()
     mParams = params::InterfaceGl::create( getWindow(), "Mapper parameters", toPixels(Vec2i(240, 400)) );
     
     mParams->addParam("Number of LEDs", &mNumLeds).min(1).max(0xffff/3);
+    mParams->addButton("Capture background", bind(&VolumeMapperApp::captureBackground, this), "key=b");
+    mParams->addButton("Clear grid", bind(&VolumeMapperApp::clearGrid, this), "key=c");
+    mParams->addSeparator();
+    mParams->addParam("Grid size (X)", &mGridX).min(1).max(640);
+    mParams->addParam("Grid size (Y)", &mGridY).min(1).max(480);
+    mParams->addParam("Grid size (Z)", &mGridZ).min(1).max(1024);
+    mParams->addParam("Z Limit", &mZLimit).min(0.001f).max(1.f).step(0.001f);
     mParams->addParam("Frames per LED", &mFramesPerLed);
     mParams->addParam("LED Color", &mLedColor);
     mParams->addParam("Point size", &mPointCloud.mPointSize).min(0.f).max(50.f).step(0.1f);
     mParams->addParam("Gain", &mGain).min(0.f).max(999.9f).step(0.1f);
-    
-    mParams->addSeparator();
-    mParams->addButton("Capture background", bind(&VolumeMapperApp::captureBackground, this), "key=b");
 }
 
 void VolumeMapperApp::captureBackground()
 {
     mDepthBackgroundTexture = mDepthTexture;
+}
+
+void VolumeMapperApp::clearGrid()
+{
+    for (int i = 0; i < mLeds.size(); i++) {
+        mLeds[i].grid.clear();
+    }
 }
 
 void VolumeMapperApp::update()
@@ -145,17 +168,17 @@ void VolumeMapperApp::update()
 
             Led &l = mLeds[mCurrentLed];
             l.frames.resize(max(min<int>( mFramesPerLed, l.frames.size()), mCurrentFrame + 1 ));
-            LedFrame &f = l.frames[mCurrentFrame];
-            f.rgb = mColorTexture;
-            f.depth = mDepthTexture;
-            
-            updateFilter(l);
-            updateDepthMask(l);
-            mLastUpdatedLed = mCurrentLed;
+            l.frames[mCurrentFrame] = mColorTexture;
         }
 
         mCurrentFrame++;
         if (mCurrentFrame >= mFramesPerLed) {
+
+            Led &l = mLeds[mCurrentLed];
+            updateDepthMask(l);
+            updateFilter(l);
+            updateGrid(l);
+            
             mCurrentFrame = 0;
             mCurrentLed++;
             if (mCurrentLed >= mNumLeds) {
@@ -189,11 +212,99 @@ void VolumeMapperApp::draw()
     gl::setMatrices(mMayaCam.getCamera());
     gl::clear();
 
-    if (mColorTexture && mLastUpdatedLed < mLeds.size()) {
-        mPointCloud.draw(mLeds[mLastUpdatedLed].mask.getTexture(), *mColorTexture);
+    // Common coordinate system is the unit cube from [0,0,0] to [1,1,1], in camera space
+    gl::translate(0.5, 0.5, 0.2);
+    gl::scale(-1.0f, -1.0f, 16.0);
+    
+    // Draw a cube around the coordinate system bounds
+    gl::color(0.2f, 0.2f, 0.8f);
+    gl::drawStrokedCube(Vec3f(0.5f, 0.5f, mZLimit / 2.0f), Vec3f(1.0f, 1.0f, mZLimit));
+    
+    // Draw raw camera output
+    if (mDepthTexture && mColorTexture) {
+        mPointCloud.draw(*mDepthTexture, *mColorTexture);
     }
     
+    // Draw the current LED's sampling grid
+    drawGrid(mLeds[mCurrentLed]);
+    
     mParams->draw();
+}
+
+void VolumeMapperApp::drawGrid(Led& led)
+{
+    gl::enableAdditiveBlending();
+
+    mDrawGridProg->bind();
+    mDrawGridProg->uniform("gain", mGain);
+    mDrawGridProg->uniform("layer", 0);
+
+    static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
+    GLint position = mDrawGridProg->getAttribLocation("position");
+    glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, &positionData[0]);
+    glEnableVertexAttribArray(position);
+
+    for (int z = 0; z < mGridZ; z++) {
+        if (led.grid.size() > z) {
+            mDrawGridProg->uniform("z", z * mZLimit / float(mGridZ - 1));
+            led.grid[z].getTexture().bind(0);
+            glDrawArrays(GL_QUADS, 0, 4);
+        }
+    }
+    
+    mDrawGridProg->unbind();
+    gl::disableAlphaBlending();
+    glDisableVertexAttribArray(position);
+}
+
+void VolumeMapperApp::updateGrid(Led& led)
+{
+    float zStep = mZLimit / (mGridZ - 1);
+
+    led.grid.resize(mGridZ);
+
+    for (int z = 0; z < mGridZ; z++) {
+        // Each slice is built up on a separate FBO
+        gl::Fbo& slice = led.grid[z];
+        bool needClear = false;
+
+        if (!slice) {
+            gl::Fbo::Format format;
+            format.setColorInternalFormat(GL_RGB32F_ARB);
+            slice = gl::Fbo(mGridX, mGridY, format);
+            needClear = true;
+        }
+ 
+        slice.bindFramebuffer();
+        gl::setViewport(Area(Vec2i(0,0), slice.getSize()));
+        gl::setMatricesWindow(slice.getSize());
+        if (needClear) {
+            gl::clear();
+        }
+        gl::enableAlphaBlending();
+        
+        mSliceProg->bind();
+        mSliceProg->uniform("z_min", z * zStep);
+        mSliceProg->uniform("z_max", (z+1) * zStep);
+        mSliceProg->uniform("alpha", 0.5f);
+        
+        mFilterProg->uniform("filter", 0);
+        mFilterProg->uniform("mask", 1);
+        
+        led.filter.getTexture().bind(0);
+        led.mask.getTexture().bind(1);
+        
+        static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
+        GLint position = mSliceProg->getAttribLocation("position");
+        glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, &positionData[0]);
+        glEnableVertexAttribArray(position);
+        glDrawArrays(GL_QUADS, 0, 4);
+        mSliceProg->unbind();
+        gl::disableAlphaBlending();
+        glDisableVertexAttribArray(position);
+
+        slice.unbindFramebuffer();
+    }
 }
 
 void VolumeMapperApp::updateFilter(Led& led)
@@ -203,10 +314,9 @@ void VolumeMapperApp::updateFilter(Led& led)
     }
 
     if (!led.filter) {
-        LedFrame& first = led.frames[0];
         gl::Fbo::Format format;
         format.setColorInternalFormat(GL_RGB32F_ARB);
-        led.filter = gl::Fbo(first.rgb->getWidth(), first.rgb->getHeight(), format);
+        led.filter = gl::Fbo(led.frames[0]->getWidth(), led.frames[0]->getHeight(), format);
     }
     
     led.filter.bindFramebuffer();
@@ -216,18 +326,21 @@ void VolumeMapperApp::updateFilter(Led& led)
     gl::enableAdditiveBlending();
     
     mFilterProg->bind();
-    mFilterProg->uniform("gain", mGain / led.frames.size());
+    mFilterProg->uniform("gain", 1.0f / led.frames.size());
     mFilterProg->uniform("frame1", 0);
     mFilterProg->uniform("frame2", 1);
+    mFilterProg->uniform("mask", 2);
 
+    led.mask.getTexture().bind(2);
+    
     static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
     GLint position = mFilterProg->getAttribLocation("position");
     glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, &positionData[0]);
     glEnableVertexAttribArray(position);
     
     for (int i = 0; i + 1 < led.frames.size(); i++) {
-        led.frames[i].rgb->bind(0);
-        led.frames[i+1].rgb->bind(1);
+        led.frames[i]->bind(0);
+        led.frames[i+1]->bind(1);
         glDrawArrays(GL_QUADS, 0, 4);
     }
 
