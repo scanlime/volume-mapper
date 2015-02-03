@@ -5,41 +5,25 @@ uniform sampler2D depth, background;
 
 const float bias = 0.005;
 const float max_spread = 0.002;
-
+const int erode = 16;
 const vec2 step = vec2(1.0 / 640.0, 1.0 / 480.0);
-
-bool sampleIsTooCloseToBackground(vec4 sample, vec2 coord)
-{
-    float bg = texture2D(background, coord).b;
-    return bg > 0.0 && sample.b + bias > bg;
-}
-
-bool sampleIsTooFarFromNeighbor(vec4 sample, vec2 coord)
-{
-    return abs(sample.b - texture2D(depth, coord).b) >= max_spread;
-}
-
-bool sampleIsTooFarFromNeighbors(vec4 sample, vec2 coord)
-{
-    return
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(-step.x, -step.y)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(0.0, -step.y)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(step.x, -step.y)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(-step.x, 0.0)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(step.x, 0.0)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(-step.x, step.y)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(0.0, step.y)) ||
-        sampleIsTooFarFromNeighbor(sample, coord + vec2(step.x, step.y));
-}
 
 void main()
 {
-    vec4 sample = texture2D(depth, texcoord);
-
-    if (sampleIsTooCloseToBackground(sample, texcoord) ||
-        sampleIsTooFarFromNeighbors(sample, texcoord)) {
-        gl_FragColor = vec4(0.0);
-    } else {
-        gl_FragColor = sample;
+    gl_FragColor = vec4(0.0);
+    float threshold = texture2D(background, texcoord).b - bias;
+    if (threshold <= 0.0) {
+        return;
     }
+
+    for (int x = -erode; x <= erode; x++) {
+        for (int y = -erode; y <= erode; y++) {
+            float sample = texture2D(depth, texcoord + vec2(step.x * x, step.y * y)).z;
+            if (sample > threshold || sample < 1e-4) {
+                return;
+            }
+        }
+    }
+
+    gl_FragColor = texture2D(depth, texcoord);
 }

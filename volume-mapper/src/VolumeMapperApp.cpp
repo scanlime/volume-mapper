@@ -112,7 +112,7 @@ void VolumeMapperApp::setup()
     mZLimit = 0.1;
 
     mSliceAlpha = 0.5;
-    mGain = 2.0;
+    mGain = 100.0;
     mCurrentLed = 0;
     mCurrentFrame = 0;
     mViewCameraPointCloud = true;
@@ -245,7 +245,7 @@ void VolumeMapperApp::draw()
     Led& currentLed = mLeds[mCurrentLed];
     
     if (mViewFilteredPointCloud && currentLed.filter && currentLed.mask) {
-        mPointCloud.mGain = 1e2f * mGain;
+        mPointCloud.mGain = mGain;
         mPointCloud.draw(currentLed.mask.getTexture(), currentLed.filter.getTexture());
     }
 
