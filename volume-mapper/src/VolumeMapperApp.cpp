@@ -277,7 +277,7 @@ void VolumeMapperApp::drawGrid(Led& led)
     glEnableVertexAttribArray(position);
 
     for (int z = 0; z < mGridZ; z++) {
-        if (led.grid.size() > z) {
+        if (led.grid.size() > z && led.grid[z]) {
             mDrawGridProg->uniform("z", z * mZLimit / float(mGridZ - 1));
             led.grid[z].getTexture().bind(0);
             glDrawArrays(GL_QUADS, 0, 4);
@@ -294,6 +294,11 @@ void VolumeMapperApp::updateGrid(Led& led)
     float zStep = mZLimit / float(mGridZ - 1);
 
     led.grid.resize(mGridZ);
+
+    // Don't filter depth values
+    led.mask.getTexture().bind();
+    led.mask.getTexture().setMinFilter(GL_NEAREST);
+    led.mask.getTexture().setMagFilter(GL_NEAREST);
 
     for (int z = 0; z < mGridZ; z++) {
         // Each slice is built up on a separate FBO
@@ -320,13 +325,11 @@ void VolumeMapperApp::updateGrid(Led& led)
         mSliceProg->uniform("z_max", 1e-3f + (z+1) * zStep);
         mSliceProg->uniform("alpha", mSliceAlpha);
         
-        mFilterProg->uniform("filter", 0);
-        mFilterProg->uniform("mask", 1);
+        mFilterProg->uniform("mask", 0);
+        mFilterProg->uniform("filter", 1);
         
-        led.filter.getTexture().bind(0);
-        led.mask.getTexture().bind(1);
-        led.mask.getTexture().setMinFilter(GL_NEAREST);
-        led.mask.getTexture().setMagFilter(GL_NEAREST);
+        led.mask.getTexture().bind(0);
+        led.filter.getTexture().bind(1);
 
         static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
         GLint position = mSliceProg->getAttribLocation("position");
