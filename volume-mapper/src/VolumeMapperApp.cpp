@@ -111,8 +111,8 @@ void VolumeMapperApp::setup()
     mGridZ = 128;
     mZLimit = 0.067;
 
-    mSliceAlpha = 0.5;
-    mGain = 10.0;
+    mSliceAlpha = 0.1;
+    mGain = 0.8;
     mCurrentLed = 0;
     mCurrentFrame = 0;
     mViewCameraPointCloud = true;
@@ -248,7 +248,7 @@ void VolumeMapperApp::draw()
     Led& currentLed = mLeds[mCurrentLed];
     
     if (mViewFilteredPointCloud && currentLed.filter && currentLed.mask) {
-        mPointCloud.mGain = 1e2 * mGain;
+        mPointCloud.mGain = mGain;
         mPointCloud.draw(currentLed.mask.getTexture(), currentLed.filter.getTexture());
     }
 
@@ -325,8 +325,8 @@ void VolumeMapperApp::updateGrid(Led& led)
         mSliceProg->uniform("z_max", 1e-3f + (z+1) * zStep);
         mSliceProg->uniform("alpha", mSliceAlpha);
         
-        mFilterProg->uniform("mask", 0);
-        mFilterProg->uniform("filter", 1);
+        mSliceProg->uniform("mask", 0);
+        mSliceProg->uniform("filter", 1);
         
         led.mask.getTexture().bind(0);
         led.filter.getTexture().bind(1);
