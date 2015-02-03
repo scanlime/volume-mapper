@@ -19,7 +19,8 @@ void PointCloudRenderer::setup(app::App &app, unsigned width, unsigned height)
 
     mVbo.bufferData(vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
     mNumPoints = vertices.size();
-    mPointSize = 4.0;
+    mPointSize = 4.0f;
+    mGain = 1.0f;
 }
 
 void PointCloudRenderer::draw(ci::gl::Texture& depth, ci::gl::Texture& color)
@@ -35,6 +36,7 @@ void PointCloudRenderer::draw(ci::gl::Texture& depth, ci::gl::Texture& color)
     gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
     
     mProg.uniform("point_size", 1e-3f * mPointSize * gl::getViewport().getHeight());
+    mProg.uniform("gain", mGain);
     mProg.uniform("depth", 0);
     mProg.uniform("color", 1);
     mProg.uniform("sprite", 2);

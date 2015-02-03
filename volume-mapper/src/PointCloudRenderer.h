@@ -13,6 +13,7 @@ public:
     void draw(ci::gl::Texture& depth, ci::gl::Texture& color);
 
     float mPointSize;
+    float mGain;
 
 private:
     ci::gl::GlslProg mProg;

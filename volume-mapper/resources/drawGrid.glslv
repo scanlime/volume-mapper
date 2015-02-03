@@ -6,5 +6,5 @@ uniform float z;
 
 void main() {
     texcoord = position;
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(2.0 * position.x - 1.0, 2.0 * position.y - 1.0, z, 1.0);
+    gl_Position = gl_ModelViewProjectionMatrix * vec4(position.xy, z, 1.0);
 }

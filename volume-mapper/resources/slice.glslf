@@ -7,9 +7,9 @@ uniform float z_min, z_max, alpha;
 void main()
 {
     vec3 color = texture2D(filter, texcoord).rgb;
-    float z = texture2D(mask, texcoord).b;
+    float z = texture2D(mask, texcoord).b * 10.0;
 
-    if (z >= z_min && z < z_max) {
+    if (z > z_min && z <= z_max) {
         gl_FragColor = vec4(color, alpha);
     } else {
         discard;

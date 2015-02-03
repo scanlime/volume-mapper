@@ -40,6 +40,6 @@ void main()
         sampleIsTooFarFromNeighbors(sample, texcoord)) {
         gl_FragColor = vec4(0.0);
     } else {
-        gl_FragColor = sample * 10.0;
+        gl_FragColor = sample;
     }
 }

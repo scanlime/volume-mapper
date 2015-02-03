@@ -3,6 +3,7 @@
 uniform sampler2D color, sprite;
 varying vec2 texcoord;
 varying float raw_z;
+uniform float gain;
 
 void main()
 {
@@ -10,6 +11,6 @@ void main()
         discard;
     }
 
-    gl_FragColor.rgb = texture2D(color, texcoord).rgb;
+    gl_FragColor.rgb = texture2D(color, texcoord).rgb * gain;
     gl_FragColor.a = texture2D(sprite, gl_PointCoord).r;
 }

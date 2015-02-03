@@ -48,7 +48,8 @@ private:
     
     int                 mCurrentLed;
     int                 mCurrentFrame;
-    
+    int                 mBackgroundInitCountdown;
+
     int                 mNumLeds;
     int                 mFramesPerLed;
     int                 mGridX;
@@ -56,8 +57,13 @@ private:
     int                 mGridZ;
     float               mZLimit;
     float               mGain;
+    float               mSliceAlpha;
     Color               mLedColor;
 
+    bool                mViewCameraPointCloud;
+    bool                mViewFilteredPointCloud;
+    bool                mViewVolumeGrid;
+    
     struct Led {
         gl::Fbo                 filter;    // Filtered color buffer, for current depth
         gl::Fbo                 mask;      // Masked depth buffer
@@ -89,7 +95,7 @@ void VolumeMapperApp::setup()
     mPointCloud.setup(*this, 640, 480);
 
     CameraPersp cam;
-    cam.setEyePoint(Vec3f(0.0, 0.0, -0.25));
+    cam.setEyePoint(Vec3f(0.0, 0.0, -0.33));
     cam.setCenterOfInterestPoint(Vec3f(0,0,0));
     cam.setPerspective(60.0f, getWindowAspectRatio(), 0.1, 1000);
     mMayaCam.setCurrentCam(cam);
@@ -105,11 +111,18 @@ void VolumeMapperApp::setup()
     mGridZ = 128;
     mZLimit = 0.1;
 
-    mGain = 120.0;
+    mSliceAlpha = 0.5;
+    mGain = 2.0;
     mCurrentLed = 0;
     mCurrentFrame = 0;
+    mViewCameraPointCloud = true;
+    mViewFilteredPointCloud = true;
+    mViewVolumeGrid = true;
     mLedColor.set(1.0f, 1.0f, 1.0f);
 
+    // Give the system time to stabilize before we latch onto an initial background image
+    mBackgroundInitCountdown = 120;
+    
     mFilterProg = gl::GlslProg::create(loadResource("filter.glslv"), loadResource("filter.glslf"));
     mSliceProg = gl::GlslProg::create(loadResource("slice.glslv"), loadResource("slice.glslf"));
     mMaskProg = gl::GlslProg::create(loadResource("depthMask.glslv"), loadResource("depthMask.glslf"));
@@ -121,11 +134,14 @@ void VolumeMapperApp::setup()
     // Static allocation for packet buffer, so we don't resize it during an async write
     mPacket.reserve(sizeof(OPCClient::Header) + 0xFFFF);
     
-    mParams = params::InterfaceGl::create( getWindow(), "Mapper parameters", toPixels(Vec2i(240, 400)) );
+    mParams = params::InterfaceGl::create( getWindow(), "Mapper parameters", toPixels(Vec2i(300, 400)) );
     
     mParams->addParam("Number of LEDs", &mNumLeds).min(1).max(0xffff/3);
     mParams->addButton("Capture background", bind(&VolumeMapperApp::captureBackground, this), "key=b");
     mParams->addButton("Clear grid", bind(&VolumeMapperApp::clearGrid, this), "key=c");
+    mParams->addParam("View camera point cloud", &mViewCameraPointCloud, "key=1");
+    mParams->addParam("View filtered point cloud", &mViewFilteredPointCloud, "key=2");
+    mParams->addParam("View volume grid", &mViewVolumeGrid, "key=3");
     mParams->addSeparator();
     mParams->addParam("Grid size (X)", &mGridX).min(1).max(640);
     mParams->addParam("Grid size (Y)", &mGridY).min(1).max(480);
@@ -135,6 +151,7 @@ void VolumeMapperApp::setup()
     mParams->addParam("LED Color", &mLedColor);
     mParams->addParam("Point size", &mPointCloud.mPointSize).min(0.f).max(50.f).step(0.1f);
     mParams->addParam("Gain", &mGain).min(0.f).max(999.9f).step(0.1f);
+    mParams->addParam("Slice alpha", &mSliceAlpha).min(0.f).max(1.0f).step(0.01f);
 }
 
 void VolumeMapperApp::captureBackground()
@@ -204,6 +221,11 @@ void VolumeMapperApp::update()
         mOPC.write(mPacket);
         mOPC.update();
     }
+    
+    if (mBackgroundInitCountdown) {
+        mBackgroundInitCountdown--;
+        captureBackground();
+    }
 }
 
 void VolumeMapperApp::draw()
@@ -220,21 +242,28 @@ void VolumeMapperApp::draw()
     gl::color(0.2f, 0.2f, 0.8f);
     gl::drawStrokedCube(Vec3f(0.5f, 0.5f, mZLimit / 2.0f), Vec3f(1.0f, 1.0f, mZLimit));
     
-    // Draw raw camera output
-    if (mDepthTexture && mColorTexture) {
+    Led& currentLed = mLeds[mCurrentLed];
+    
+    if (mViewFilteredPointCloud && currentLed.filter && currentLed.mask) {
+        mPointCloud.mGain = 1e2f * mGain;
+        mPointCloud.draw(currentLed.mask.getTexture(), currentLed.filter.getTexture());
+    }
+
+    if (mViewCameraPointCloud && mDepthTexture && mColorTexture) {
+        mPointCloud.mGain = 1.0f;
         mPointCloud.draw(*mDepthTexture, *mColorTexture);
     }
-    
-    // Draw the current LED's sampling grid
-    drawGrid(mLeds[mCurrentLed]);
-    
+
+    if (mViewVolumeGrid) {
+        drawGrid(currentLed);
+    }
+        
     mParams->draw();
 }
 
 void VolumeMapperApp::drawGrid(Led& led)
 {
     gl::enableAdditiveBlending();
-
     mDrawGridProg->bind();
     mDrawGridProg->uniform("gain", mGain);
     mDrawGridProg->uniform("layer", 0);
@@ -259,7 +288,7 @@ void VolumeMapperApp::drawGrid(Led& led)
 
 void VolumeMapperApp::updateGrid(Led& led)
 {
-    float zStep = mZLimit / (mGridZ - 1);
+    float zStep = mZLimit / float(mGridZ - 1);
 
     led.grid.resize(mGridZ);
 
@@ -284,16 +313,18 @@ void VolumeMapperApp::updateGrid(Led& led)
         gl::enableAlphaBlending();
         
         mSliceProg->bind();
-        mSliceProg->uniform("z_min", z * zStep);
-        mSliceProg->uniform("z_max", (z+1) * zStep);
-        mSliceProg->uniform("alpha", 0.5f);
+        mSliceProg->uniform("z_min", 1e-3f + z * zStep);
+        mSliceProg->uniform("z_max", 1e-3f + (z+1) * zStep);
+        mSliceProg->uniform("alpha", mSliceAlpha);
         
         mFilterProg->uniform("filter", 0);
         mFilterProg->uniform("mask", 1);
         
         led.filter.getTexture().bind(0);
         led.mask.getTexture().bind(1);
-        
+        led.mask.getTexture().setMinFilter(GL_NEAREST);
+        led.mask.getTexture().setMagFilter(GL_NEAREST);
+
         static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
         GLint position = mSliceProg->getAttribLocation("position");
         glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, &positionData[0]);
