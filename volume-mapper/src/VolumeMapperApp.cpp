@@ -3,11 +3,12 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/Rand.h"
 #include "cinder/Color.h"
+#include "cinder/MayaCamUI.h"
 #include "cinder/params/Params.h"
 
 #include "CinderFreenect.h"
+#include "PointCloudRenderer.h"
 #include "OPCClient.h"
 
 using namespace ci;
@@ -21,20 +22,29 @@ public:
 	void update();
 	void draw();
 	
+    void mouseDown(MouseEvent event);
+    void mouseDrag(MouseEvent event);
+    void captureBackground();
+    
 private:
     params::InterfaceGlRef  mParams;
+    ci::MayaCamUI           mMayaCam;
     
 	KinectRef           mKinect;
-    gl::Fbo             mFloatFbo;
+    PointCloudRenderer  mPointCloud;
     gl::GlslProgRef     mFilterProg;
-    gl::TextureRef		mColorTexture, mDepthTexture;
-
+    gl::GlslProgRef     mMaskProg;
+    gl::TextureRef		mColorTexture;
+    gl::TextureRef      mDepthTexture;
+    gl::TextureRef      mDepthBackgroundTexture;
+    
     OPCClient           mOPC;
     vector<char>        mPacket;
     
     int                 mCurrentLed;
     int                 mCurrentFrame;
-
+    int                 mLastUpdatedLed;
+    
     int                 mNumLeds;
     int                 mFramesPerLed;
     float               mGain;
@@ -47,13 +57,14 @@ private:
 
     struct Led {
         gl::Fbo          filter;
+        gl::Fbo          mask;
         vector<LedFrame> frames;
     };
     
     vector<Led>         mLeds;
 
-    void drawGrid(gl::Texture& tex, int index);
     void updateFilter(Led& led);
+    void updateDepthMask(Led& led);
 };
 
 void VolumeMapperApp::prepareSettings( Settings* settings )
@@ -66,16 +77,31 @@ void VolumeMapperApp::setup()
 {
     gl::disableVerticalSync();
 
-    mKinect = Kinect::create();
+    Kinect::FreenectParams kinectConfig;
+    kinectConfig.mDepthRegister = true;
+    mKinect = Kinect::create(kinectConfig);
+    mPointCloud.setup(*this, 640, 480);
 
-    mNumLeds = 16;
+    CameraPersp cam;
+    cam.setEyePoint(Vec3f(0.0, 0.0, -0.25));
+    cam.setCenterOfInterestPoint(Vec3f(0,0,0));
+    cam.setPerspective(60.0f, getWindowAspectRatio(), 0.1, 1000);
+    mMayaCam.setCurrentCam(cam);
+
+    gl::disableVerticalSync();
+    gl::disable(GL_DEPTH_TEST);
+    gl::disable(GL_CULL_FACE);
+
+    mNumLeds = 4;
     mFramesPerLed = 4;
     mGain = 120.0;
     mCurrentLed = 0;
     mCurrentFrame = 0;
+    mLastUpdatedLed = 0;
     mLedColor.set(1.0f, 1.0f, 1.0f);
 
     mFilterProg = gl::GlslProg::create(loadResource("filter.glslv"), loadResource("filter.glslf"));
+    mMaskProg = gl::GlslProg::create(loadResource("depthMask.glslv"), loadResource("depthMask.glslf"));
 
     mOPC.connectConnectEventHandler(&OPCClient::onConnect, &mOPC);
     mOPC.connectErrorEventHandler(&OPCClient::onError, &mOPC);
@@ -84,12 +110,20 @@ void VolumeMapperApp::setup()
     mPacket.reserve(sizeof(OPCClient::Header) + 0xFFFF);
     
     mParams = params::InterfaceGl::create( getWindow(), "Mapper parameters", toPixels(Vec2i(240, 400)) );
-    mParams->minimize();
     
     mParams->addParam("Number of LEDs", &mNumLeds).min(1).max(0xffff/3);
     mParams->addParam("Frames per LED", &mFramesPerLed);
     mParams->addParam("LED Color", &mLedColor);
+    mParams->addParam("Point size", &mPointCloud.mPointSize).min(0.f).max(50.f).step(0.1f);
     mParams->addParam("Gain", &mGain).min(0.f).max(999.9f).step(0.1f);
+    
+    mParams->addSeparator();
+    mParams->addButton("Capture background", bind(&VolumeMapperApp::captureBackground, this), "key=b");
+}
+
+void VolumeMapperApp::captureBackground()
+{
+    mDepthBackgroundTexture = mDepthTexture;
 }
 
 void VolumeMapperApp::update()
@@ -98,6 +132,9 @@ void VolumeMapperApp::update()
 
     if (mKinect->checkNewDepthFrame()) {
         mDepthTexture = gl::Texture::create(mKinect->getDepthImage());
+        if (!mDepthBackgroundTexture) {
+            mDepthBackgroundTexture = mDepthTexture;
+        }
     }
         
     if (mKinect->checkNewVideoFrame()) {
@@ -113,6 +150,8 @@ void VolumeMapperApp::update()
             f.depth = mDepthTexture;
             
             updateFilter(l);
+            updateDepthMask(l);
+            mLastUpdatedLed = mCurrentLed;
         }
 
         mCurrentFrame++;
@@ -147,26 +186,14 @@ void VolumeMapperApp::update()
 void VolumeMapperApp::draw()
 {
     gl::setViewport(Area(Vec2i(0,0), getWindowSize()));
-	gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    gl::setMatrices(mMayaCam.getCamera());
     gl::clear();
 
-    for (int i = 0; i < mLeds.size(); i++) {
-        Led& led = mLeds[i];
-        if (led.filter) {
-            drawGrid(led.filter.getTexture(), i);
-        }
+    if (mColorTexture && mLastUpdatedLed < mLeds.size()) {
+        mPointCloud.draw(mLeds[mLastUpdatedLed].mask.getTexture(), *mColorTexture);
     }
     
     mParams->draw();
-}
-
-void VolumeMapperApp::drawGrid(gl::Texture& tex, int index)
-{
-    Vec2i size(320, 240);
-    int width = getWindowWidth() / size.x;
-    Vec2i pos(size.x * (index % width), size.y * (index / width));
-    Rectf rect(pos, size+pos);
-    gl::draw(tex, Rectf(pos, pos+size));
 }
 
 void VolumeMapperApp::updateFilter(Led& led)
@@ -210,5 +237,45 @@ void VolumeMapperApp::updateFilter(Led& led)
     led.filter.unbindFramebuffer();
 }
 
+void VolumeMapperApp::updateDepthMask(Led& led)
+{
+    if (!led.mask) {
+        gl::Fbo::Format format;
+        format.setColorInternalFormat(GL_RGB32F_ARB);
+        led.mask = gl::Fbo(mDepthTexture->getWidth(), mDepthTexture->getHeight(), format);
+    }
+    
+    led.mask.bindFramebuffer();
+    gl::setViewport(Area(Vec2i(0,0), led.mask.getSize()));
+    gl::setMatricesWindow(led.mask.getSize());
+    gl::clear();
+    gl::disableAlphaBlending();
+    
+    mMaskProg->bind();
+    mMaskProg->uniform("depth", 0);
+    mMaskProg->uniform("background", 1);
+    mDepthTexture->bind(0);
+    mDepthBackgroundTexture->bind(1);
+    
+    static const float positionData[8] = { 0, 0, 1, 0, 1, 1, 0, 1 };
+    GLint position = mMaskProg->getAttribLocation("position");
+    glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, &positionData[0]);
+    glEnableVertexAttribArray(position);
+    glDrawArrays(GL_QUADS, 0, 4);
+    
+    mMaskProg->unbind();
+    glDisableVertexAttribArray(position);
+    led.mask.unbindFramebuffer();
+}
+
+void VolumeMapperApp::mouseDown(MouseEvent event)
+{
+    mMayaCam.mouseDown(event.getPos());
+}
+
+void VolumeMapperApp::mouseDrag(MouseEvent event)
+{
+    mMayaCam.mouseDrag(event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown());
+}
 
 CINDER_APP_BASIC( VolumeMapperApp, RendererGl )

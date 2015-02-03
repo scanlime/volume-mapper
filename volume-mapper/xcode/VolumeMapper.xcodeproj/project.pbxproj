@@ -29,20 +29,6 @@
 		756459A71A7F6AFF0028586C /* UdpSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7564595D1A7F6AFF0028586C /* UdpSession.cpp */; };
 		756459A81A7F6AFF0028586C /* WaitTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 756459601A7F6AFF0028586C /* WaitTimer.cpp */; };
 		756459A91A7F6AFF0028586C /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756459661A7F6AFF0028586C /* libusb-1.0.a */; };
-		756459AA1A7F6AFF0028586C /* KinectBasic-all-non-framework-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 7564596E1A7F6AFF0028586C /* KinectBasic-all-non-framework-target-headers.hmap */; };
-		756459AB1A7F6AFF0028586C /* KinectBasic-all-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 7564596F1A7F6AFF0028586C /* KinectBasic-all-target-headers.hmap */; };
-		756459AC1A7F6AFF0028586C /* KinectBasic-generated-files.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459701A7F6AFF0028586C /* KinectBasic-generated-files.hmap */; };
-		756459AD1A7F6AFF0028586C /* KinectBasic-own-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459711A7F6AFF0028586C /* KinectBasic-own-target-headers.hmap */; };
-		756459AE1A7F6AFF0028586C /* KinectBasic-project-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459721A7F6AFF0028586C /* KinectBasic-project-headers.hmap */; };
-		756459AF1A7F6AFF0028586C /* KinectBasic.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459731A7F6AFF0028586C /* KinectBasic.hmap */; };
-		756459B01A7F6AFF0028586C /* KinectBasic.LinkFileList in Resources */ = {isa = PBXBuildFile; fileRef = 756459761A7F6AFF0028586C /* KinectBasic.LinkFileList */; };
-		756459B11A7F6AFF0028586C /* KinectPointCloudGL-all-non-framework-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459801A7F6AFF0028586C /* KinectPointCloudGL-all-non-framework-target-headers.hmap */; };
-		756459B21A7F6AFF0028586C /* KinectPointCloudGL-all-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459811A7F6AFF0028586C /* KinectPointCloudGL-all-target-headers.hmap */; };
-		756459B31A7F6AFF0028586C /* KinectPointCloudGL-generated-files.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459821A7F6AFF0028586C /* KinectPointCloudGL-generated-files.hmap */; };
-		756459B41A7F6AFF0028586C /* KinectPointCloudGL-own-target-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459831A7F6AFF0028586C /* KinectPointCloudGL-own-target-headers.hmap */; };
-		756459B51A7F6AFF0028586C /* KinectPointCloudGL-project-headers.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459841A7F6AFF0028586C /* KinectPointCloudGL-project-headers.hmap */; };
-		756459B61A7F6AFF0028586C /* KinectPointCloudGL.hmap in Resources */ = {isa = PBXBuildFile; fileRef = 756459851A7F6AFF0028586C /* KinectPointCloudGL.hmap */; };
-		756459B71A7F6AFF0028586C /* KinectPointCloudGL.LinkFileList in Resources */ = {isa = PBXBuildFile; fileRef = 756459881A7F6AFF0028586C /* KinectPointCloudGL.LinkFileList */; };
 		756459B81A7F6AFF0028586C /* CinderFreenect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7564598D1A7F6AFF0028586C /* CinderFreenect.cpp */; };
 		756459B91A7F6AFF0028586C /* cameras.c in Sources */ = {isa = PBXBuildFile; fileRef = 756459901A7F6AFF0028586C /* cameras.c */; };
 		756459BA1A7F6AFF0028586C /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 756459921A7F6AFF0028586C /* core.c */; };
@@ -52,6 +38,12 @@
 		756459C01A7F6B190028586C /* OPCClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 756459BE1A7F6B190028586C /* OPCClient.cpp */; };
 		756459C71A800BB20028586C /* filter.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459C51A800BB20028586C /* filter.glslf */; };
 		756459C81A800BB20028586C /* filter.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459C61A800BB20028586C /* filter.glslv */; };
+		756459CD1A8014050028586C /* pointCloud.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459CB1A8014050028586C /* pointCloud.glslf */; };
+		756459CE1A8014050028586C /* pointCloud.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459CC1A8014050028586C /* pointCloud.glslv */; };
+		756459D11A80153A0028586C /* PointCloudRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 756459CF1A80153A0028586C /* PointCloudRenderer.cpp */; };
+		756459D31A801B4F0028586C /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 756459D21A801B4F0028586C /* particle.png */; };
+		756459D61A804B9C0028586C /* depthMask.glslf in Resources */ = {isa = PBXBuildFile; fileRef = 756459D41A804B9C0028586C /* depthMask.glslf */; };
+		756459D71A804B9C0028586C /* depthMask.glslv in Resources */ = {isa = PBXBuildFile; fileRef = 756459D51A804B9C0028586C /* depthMask.glslv */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		FAB99DEE985E4AE185F96494 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 885AD63FA1254C9A9BA299BE /* IOKit.framework */; };
 /* End PBXBuildFile section */
@@ -105,22 +97,6 @@
 		756459611A7F6AFF0028586C /* WaitTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitTimer.h; sourceTree = "<group>"; };
 		756459621A7F6AFF0028586C /* WaitTimerEventHandlerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitTimerEventHandlerInterface.h; sourceTree = "<group>"; };
 		756459661A7F6AFF0028586C /* libusb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libusb-1.0.a"; sourceTree = "<group>"; };
-		7564596E1A7F6AFF0028586C /* KinectBasic-all-non-framework-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectBasic-all-non-framework-target-headers.hmap"; sourceTree = "<group>"; };
-		7564596F1A7F6AFF0028586C /* KinectBasic-all-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectBasic-all-target-headers.hmap"; sourceTree = "<group>"; };
-		756459701A7F6AFF0028586C /* KinectBasic-generated-files.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectBasic-generated-files.hmap"; sourceTree = "<group>"; };
-		756459711A7F6AFF0028586C /* KinectBasic-own-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectBasic-own-target-headers.hmap"; sourceTree = "<group>"; };
-		756459721A7F6AFF0028586C /* KinectBasic-project-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectBasic-project-headers.hmap"; sourceTree = "<group>"; };
-		756459731A7F6AFF0028586C /* KinectBasic.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = KinectBasic.hmap; sourceTree = "<group>"; };
-		756459761A7F6AFF0028586C /* KinectBasic.LinkFileList */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KinectBasic.LinkFileList; sourceTree = "<group>"; };
-		756459771A7F6AFF0028586C /* KinectBasic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = KinectBasic.xcodeproj; sourceTree = "<group>"; };
-		756459801A7F6AFF0028586C /* KinectPointCloudGL-all-non-framework-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectPointCloudGL-all-non-framework-target-headers.hmap"; sourceTree = "<group>"; };
-		756459811A7F6AFF0028586C /* KinectPointCloudGL-all-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectPointCloudGL-all-target-headers.hmap"; sourceTree = "<group>"; };
-		756459821A7F6AFF0028586C /* KinectPointCloudGL-generated-files.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectPointCloudGL-generated-files.hmap"; sourceTree = "<group>"; };
-		756459831A7F6AFF0028586C /* KinectPointCloudGL-own-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectPointCloudGL-own-target-headers.hmap"; sourceTree = "<group>"; };
-		756459841A7F6AFF0028586C /* KinectPointCloudGL-project-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KinectPointCloudGL-project-headers.hmap"; sourceTree = "<group>"; };
-		756459851A7F6AFF0028586C /* KinectPointCloudGL.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = KinectPointCloudGL.hmap; sourceTree = "<group>"; };
-		756459881A7F6AFF0028586C /* KinectPointCloudGL.LinkFileList */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KinectPointCloudGL.LinkFileList; sourceTree = "<group>"; };
-		756459891A7F6AFF0028586C /* KinectPointCloudGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = KinectPointCloudGL.xcodeproj; sourceTree = "<group>"; };
 		7564598D1A7F6AFF0028586C /* CinderFreenect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CinderFreenect.cpp; sourceTree = "<group>"; };
 		7564598E1A7F6AFF0028586C /* CinderFreenect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CinderFreenect.h; sourceTree = "<group>"; };
 		756459901A7F6AFF0028586C /* cameras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cameras.c; sourceTree = "<group>"; };
@@ -140,6 +116,13 @@
 		756459BF1A7F6B190028586C /* OPCClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OPCClient.h; path = ../src/OPCClient.h; sourceTree = "<group>"; };
 		756459C51A800BB20028586C /* filter.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = filter.glslf; path = ../resources/filter.glslf; sourceTree = "<group>"; };
 		756459C61A800BB20028586C /* filter.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = filter.glslv; path = ../resources/filter.glslv; sourceTree = "<group>"; };
+		756459CB1A8014050028586C /* pointCloud.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = pointCloud.glslf; path = ../resources/pointCloud.glslf; sourceTree = "<group>"; };
+		756459CC1A8014050028586C /* pointCloud.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = pointCloud.glslv; path = ../resources/pointCloud.glslv; sourceTree = "<group>"; };
+		756459CF1A80153A0028586C /* PointCloudRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PointCloudRenderer.cpp; path = ../src/PointCloudRenderer.cpp; sourceTree = "<group>"; };
+		756459D01A80153A0028586C /* PointCloudRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointCloudRenderer.h; path = ../src/PointCloudRenderer.h; sourceTree = "<group>"; };
+		756459D21A801B4F0028586C /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = particle.png; path = ../resources/particle.png; sourceTree = "<group>"; };
+		756459D41A804B9C0028586C /* depthMask.glslf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = depthMask.glslf; path = ../resources/depthMask.glslf; sourceTree = "<group>"; };
+		756459D51A804B9C0028586C /* depthMask.glslv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = depthMask.glslv; path = ../resources/depthMask.glslv; sourceTree = "<group>"; };
 		885AD63FA1254C9A9BA299BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		8D1107320486CEB800E47090 /* VolumeMapper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VolumeMapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD8E092C4ED8446B91C3467C /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; };
@@ -183,6 +166,7 @@
 			children = (
 				756459BE1A7F6B190028586C /* OPCClient.cpp */,
 				33305C941CCA453894D99D64 /* VolumeMapperApp.cpp */,
+				756459CF1A80153A0028586C /* PointCloudRenderer.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -237,6 +221,7 @@
 			children = (
 				1E91F18AFD4A475582759522 /* Resources.h */,
 				756459BF1A7F6B190028586C /* OPCClient.h */,
+				756459D01A80153A0028586C /* PointCloudRenderer.h */,
 				EE5A1848BF5A41F3B8D50674 /* VolumeMapper_Prefix.pch */,
 			);
 			name = Headers;
@@ -245,6 +230,11 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				756459D41A804B9C0028586C /* depthMask.glslf */,
+				756459D51A804B9C0028586C /* depthMask.glslv */,
+				756459D21A801B4F0028586C /* particle.png */,
+				756459CB1A8014050028586C /* pointCloud.glslf */,
+				756459CC1A8014050028586C /* pointCloud.glslv */,
 				CD8E092C4ED8446B91C3467C /* CinderApp.icns */,
 				756459C51A800BB20028586C /* filter.glslf */,
 				756459C61A800BB20028586C /* filter.glslv */,
@@ -325,7 +315,6 @@
 			isa = PBXGroup;
 			children = (
 				756459641A7F6AFF0028586C /* lib */,
-				756459671A7F6AFF0028586C /* samples */,
 				7564598C1A7F6AFF0028586C /* src */,
 			);
 			name = "Cinder-Kinect";
@@ -346,167 +335,6 @@
 				756459661A7F6AFF0028586C /* libusb-1.0.a */,
 			);
 			path = macosx;
-			sourceTree = "<group>";
-		};
-		756459671A7F6AFF0028586C /* samples */ = {
-			isa = PBXGroup;
-			children = (
-				756459681A7F6AFF0028586C /* KinectBasic */,
-				7564597A1A7F6AFF0028586C /* KinectPointCloudGL */,
-			);
-			path = samples;
-			sourceTree = "<group>";
-		};
-		756459681A7F6AFF0028586C /* KinectBasic */ = {
-			isa = PBXGroup;
-			children = (
-				756459691A7F6AFF0028586C /* xcode */,
-			);
-			path = KinectBasic;
-			sourceTree = "<group>";
-		};
-		756459691A7F6AFF0028586C /* xcode */ = {
-			isa = PBXGroup;
-			children = (
-				7564596A1A7F6AFF0028586C /* build */,
-				756459771A7F6AFF0028586C /* KinectBasic.xcodeproj */,
-			);
-			path = xcode;
-			sourceTree = "<group>";
-		};
-		7564596A1A7F6AFF0028586C /* build */ = {
-			isa = PBXGroup;
-			children = (
-				7564596B1A7F6AFF0028586C /* KinectBasic.build */,
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
-		7564596B1A7F6AFF0028586C /* KinectBasic.build */ = {
-			isa = PBXGroup;
-			children = (
-				7564596C1A7F6AFF0028586C /* Debug */,
-			);
-			path = KinectBasic.build;
-			sourceTree = "<group>";
-		};
-		7564596C1A7F6AFF0028586C /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				7564596D1A7F6AFF0028586C /* KinectBasic.build */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		7564596D1A7F6AFF0028586C /* KinectBasic.build */ = {
-			isa = PBXGroup;
-			children = (
-				7564596E1A7F6AFF0028586C /* KinectBasic-all-non-framework-target-headers.hmap */,
-				7564596F1A7F6AFF0028586C /* KinectBasic-all-target-headers.hmap */,
-				756459701A7F6AFF0028586C /* KinectBasic-generated-files.hmap */,
-				756459711A7F6AFF0028586C /* KinectBasic-own-target-headers.hmap */,
-				756459721A7F6AFF0028586C /* KinectBasic-project-headers.hmap */,
-				756459731A7F6AFF0028586C /* KinectBasic.hmap */,
-				756459741A7F6AFF0028586C /* Objects-normal */,
-			);
-			path = KinectBasic.build;
-			sourceTree = "<group>";
-		};
-		756459741A7F6AFF0028586C /* Objects-normal */ = {
-			isa = PBXGroup;
-			children = (
-				756459751A7F6AFF0028586C /* i386 */,
-			);
-			path = "Objects-normal";
-			sourceTree = "<group>";
-		};
-		756459751A7F6AFF0028586C /* i386 */ = {
-			isa = PBXGroup;
-			children = (
-				756459761A7F6AFF0028586C /* KinectBasic.LinkFileList */,
-			);
-			path = i386;
-			sourceTree = "<group>";
-		};
-		756459781A7F6AFF0028586C /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
-		7564597A1A7F6AFF0028586C /* KinectPointCloudGL */ = {
-			isa = PBXGroup;
-			children = (
-				7564597B1A7F6AFF0028586C /* xcode */,
-			);
-			path = KinectPointCloudGL;
-			sourceTree = "<group>";
-		};
-		7564597B1A7F6AFF0028586C /* xcode */ = {
-			isa = PBXGroup;
-			children = (
-				7564597C1A7F6AFF0028586C /* build */,
-				756459891A7F6AFF0028586C /* KinectPointCloudGL.xcodeproj */,
-			);
-			path = xcode;
-			sourceTree = "<group>";
-		};
-		7564597C1A7F6AFF0028586C /* build */ = {
-			isa = PBXGroup;
-			children = (
-				7564597D1A7F6AFF0028586C /* KinectPointCloudGL.build */,
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
-		7564597D1A7F6AFF0028586C /* KinectPointCloudGL.build */ = {
-			isa = PBXGroup;
-			children = (
-				7564597E1A7F6AFF0028586C /* Debug */,
-			);
-			path = KinectPointCloudGL.build;
-			sourceTree = "<group>";
-		};
-		7564597E1A7F6AFF0028586C /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				7564597F1A7F6AFF0028586C /* KinectPointCloudGL.build */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		7564597F1A7F6AFF0028586C /* KinectPointCloudGL.build */ = {
-			isa = PBXGroup;
-			children = (
-				756459801A7F6AFF0028586C /* KinectPointCloudGL-all-non-framework-target-headers.hmap */,
-				756459811A7F6AFF0028586C /* KinectPointCloudGL-all-target-headers.hmap */,
-				756459821A7F6AFF0028586C /* KinectPointCloudGL-generated-files.hmap */,
-				756459831A7F6AFF0028586C /* KinectPointCloudGL-own-target-headers.hmap */,
-				756459841A7F6AFF0028586C /* KinectPointCloudGL-project-headers.hmap */,
-				756459851A7F6AFF0028586C /* KinectPointCloudGL.hmap */,
-				756459861A7F6AFF0028586C /* Objects-normal */,
-			);
-			path = KinectPointCloudGL.build;
-			sourceTree = "<group>";
-		};
-		756459861A7F6AFF0028586C /* Objects-normal */ = {
-			isa = PBXGroup;
-			children = (
-				756459871A7F6AFF0028586C /* i386 */,
-			);
-			path = "Objects-normal";
-			sourceTree = "<group>";
-		};
-		756459871A7F6AFF0028586C /* i386 */ = {
-			isa = PBXGroup;
-			children = (
-				756459881A7F6AFF0028586C /* KinectPointCloudGL.LinkFileList */,
-			);
-			path = i386;
-			sourceTree = "<group>";
-		};
-		7564598A1A7F6AFF0028586C /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
 			sourceTree = "<group>";
 		};
 		7564598C1A7F6AFF0028586C /* src */ = {
@@ -588,16 +416,6 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* VolumeMapper */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 756459781A7F6AFF0028586C /* Products */;
-					ProjectRef = 756459771A7F6AFF0028586C /* KinectBasic.xcodeproj */;
-				},
-				{
-					ProductGroup = 7564598A1A7F6AFF0028586C /* Products */;
-					ProjectRef = 756459891A7F6AFF0028586C /* KinectPointCloudGL.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* VolumeMapper */,
@@ -610,24 +428,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				756459B11A7F6AFF0028586C /* KinectPointCloudGL-all-non-framework-target-headers.hmap in Resources */,
 				7564599D1A7F6AFF0028586C /* .gitignore in Resources */,
-				756459B21A7F6AFF0028586C /* KinectPointCloudGL-all-target-headers.hmap in Resources */,
 				06E96A24F9BE41C3AE6234FE /* CinderApp.icns in Resources */,
-				756459B01A7F6AFF0028586C /* KinectBasic.LinkFileList in Resources */,
-				756459AC1A7F6AFF0028586C /* KinectBasic-generated-files.hmap in Resources */,
-				756459AB1A7F6AFF0028586C /* KinectBasic-all-target-headers.hmap in Resources */,
-				756459AF1A7F6AFF0028586C /* KinectBasic.hmap in Resources */,
-				756459B41A7F6AFF0028586C /* KinectPointCloudGL-own-target-headers.hmap in Resources */,
-				756459B71A7F6AFF0028586C /* KinectPointCloudGL.LinkFileList in Resources */,
-				756459AE1A7F6AFF0028586C /* KinectBasic-project-headers.hmap in Resources */,
-				756459B51A7F6AFF0028586C /* KinectPointCloudGL-project-headers.hmap in Resources */,
+				756459CE1A8014050028586C /* pointCloud.glslv in Resources */,
+				756459D31A801B4F0028586C /* particle.png in Resources */,
+				756459D61A804B9C0028586C /* depthMask.glslf in Resources */,
 				756459C81A800BB20028586C /* filter.glslv in Resources */,
-				756459B31A7F6AFF0028586C /* KinectPointCloudGL-generated-files.hmap in Resources */,
-				756459AA1A7F6AFF0028586C /* KinectBasic-all-non-framework-target-headers.hmap in Resources */,
 				756459C71A800BB20028586C /* filter.glslf in Resources */,
-				756459B61A7F6AFF0028586C /* KinectPointCloudGL.hmap in Resources */,
-				756459AD1A7F6AFF0028586C /* KinectBasic-own-target-headers.hmap in Resources */,
+				756459D71A804B9C0028586C /* depthMask.glslv in Resources */,
+				756459CD1A8014050028586C /* pointCloud.glslf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,6 +458,7 @@
 				756459B91A7F6AFF0028586C /* cameras.c in Sources */,
 				756459A71A7F6AFF0028586C /* UdpSession.cpp in Sources */,
 				7564599E1A7F6AFF0028586C /* ClientInterface.cpp in Sources */,
+				756459D11A80153A0028586C /* PointCloudRenderer.cpp in Sources */,
 				756459BB1A7F6AFF0028586C /* registration.c in Sources */,
 				658685B10A6F4175B2CA3142 /* VolumeMapperApp.cpp in Sources */,
 				756459A81A7F6AFF0028586C /* WaitTimer.cpp in Sources */,

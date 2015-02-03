@@ -12,6 +12,8 @@ public:
     void setup(ci::app::App& app, unsigned width, unsigned height);
     void draw(ci::gl::Texture& depth, ci::gl::Texture& color);
 
+    float mPointSize;
+
 private:
     ci::gl::GlslProg mProg;
     ci::gl::Vbo mVbo;

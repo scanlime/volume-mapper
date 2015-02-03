@@ -25,9 +25,8 @@ void main()
     float sy = sin(ray_y);
     float cy = cos(ray_y);
 
-    float dist = raw_z * 15.0;
+    float dist = raw_z * 5.0;
     vec3 p = dist * vec3(sx, sy, cx*cy);
-    p.z -= 1.0;
 
     gl_Position = gl_ModelViewProjectionMatrix * vec4(p, 1.0);
     gl_PointSize = point_size / gl_Position.w;
