@@ -104,11 +104,11 @@ void VolumeMapperApp::setup()
     gl::disable(GL_DEPTH_TEST);
     gl::disable(GL_CULL_FACE);
 
-    mNumLeds = 16;
-    mFramesPerLed = 4;
-    mGridX = 128;
-    mGridY = 128;
-    mGridZ = 128;
+    mNumLeds = 64;
+    mFramesPerLed = 3;
+    mGridX = 64;
+    mGridY = 64;
+    mGridZ = 64;
     mZLimit = 0.067;
 
     mSliceAlpha = 0.1;
