@@ -19,7 +19,7 @@ void PointCloudRenderer::setup(app::App &app, unsigned width, unsigned height)
 
     mVbo.bufferData(vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
     mNumPoints = vertices.size();
-    mPointSize = 4.0f;
+    mPointSize = 6.0f;
     mGain = 1.0f;
 }
 
